@@ -1,5 +1,6 @@
 use person::Person;
 use postgres::{Client, NoTls};
+use redis::Commands;
 
 pub mod person;
 
@@ -12,6 +13,8 @@ fn main() {
     bincode_example(&person);
 
     postgres_example(&person);
+
+    redis_example(&person);
 }
 
 fn bincode_example(person: &Person) {
@@ -55,4 +58,15 @@ fn postgres_example(person: &Person) {
     };
 
     println!("person from db: {:?}", person_from_db);
+}
+
+fn redis_example(person: &Person) {
+    let client = redis::Client::open("redis://default:redispw@localhost:32768").unwrap();
+    let mut con = client.get_connection().unwrap();
+
+    let _: () = con.set("person", bincode::serialize(person).unwrap()).unwrap();
+
+    let person_from_redis: Person = bincode::deserialize(&con.get::<_, Vec<u8>>("person").unwrap()).unwrap();
+
+    println!("person from redis: {:?}", person_from_redis)
 }
