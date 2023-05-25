@@ -28,6 +28,8 @@ fn postgres_example(person: &Person) {
         NoTls,
     ).unwrap();
 
+    client.batch_execute("SET search_path TO example").unwrap();
+
     client.batch_execute(
         "
         CREATE TABLE IF NOT EXISTS person (
