@@ -86,7 +86,7 @@ fn redis_example(person: &Person) {
 fn diesel_example(person: &Person) {
     let database_url = "postgresql://rust_app:karel123@centos01.vs.msvacina.cz/rust";
 
-    let mut connection = PgConnection::establish(&database_url)
+    let mut connection = PgConnection::establish(database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
 
     let person_diesel = person_diesel::PersonDiesel {
