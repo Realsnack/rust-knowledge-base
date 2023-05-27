@@ -22,6 +22,7 @@ fn main() {
     diesel_example(&person);
 }
 
+/// Example of serialization and deserialization using bincode
 fn bincode_example(person: &Person) {
     let encoded: Vec<u8> = bincode::serialize(&person).unwrap();
     println!("encoded: {:?}", encoded);
@@ -30,6 +31,7 @@ fn bincode_example(person: &Person) {
     println!("decoded: {:?}", decoded);
 }
 
+/// Example of connecting to postgresql database and inserting and selecting data
 fn postgres_example(person: &Person) {
     let mut client = Client::connect(
         "postgresql://rust_app:karel123@centos01.vs.msvacina.cz/rust",
@@ -69,6 +71,7 @@ fn postgres_example(person: &Person) {
     println!("person from db: {:?}", person_from_db);
 }
 
+/// Example of connecting to redis database and inserting and selecting data
 fn redis_example(person: &Person) {
     let client = redis::Client::open("redis://rust_app:karel123@localhost:6379").unwrap();
     let mut con = client.get_connection().unwrap();
@@ -83,6 +86,7 @@ fn redis_example(person: &Person) {
     println!("person from redis: {:?}", person_from_redis)
 }
 
+/// Example of connecting to postgresql database using diesel and inserting and selecting data
 fn diesel_example(person: &Person) {
     let database_url = "postgresql://rust_app:karel123@centos01.vs.msvacina.cz/rust";
 
