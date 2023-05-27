@@ -70,7 +70,7 @@ fn postgres_example(person: &Person) {
 }
 
 fn redis_example(person: &Person) {
-    let client = redis::Client::open("redis://default:redispw@localhost:32768").unwrap();
+    let client = redis::Client::open("redis://rust_app:karel123@localhost:6379").unwrap();
     let mut con = client.get_connection().unwrap();
 
     let _: () = con
