@@ -2,24 +2,47 @@ use diesel::{Connection, PgConnection, RunQueryDsl, QueryDsl};
 use person::Person;
 use postgres::{Client, NoTls};
 use redis::Commands;
+use clap::Parser;
 
 pub mod person;
 pub mod person_diesel;
 pub mod schema;
 
+#[derive(Parser, Debug)]
+struct Args {
+    #[clap(long,action)]
+    run_bincode_example: bool,
+    #[clap(long,action)]
+    run_postgres_example: bool,
+    #[clap(long,action)]
+    run_redis_example: bool,
+    #[clap(long,action)]
+    run_diesel_example: bool
+}
+
 fn main() {
+    let args = Args::parse();
+
     let person = person::Person {
         name: "Alice".to_string(),
         age: 20,
     };
 
-    bincode_example(&person);
+    if args.run_bincode_example {
+        bincode_example(&person);
+    }
 
-    postgres_example(&person);
+    if args.run_postgres_example {
+        postgres_example(&person);
+    }
 
-    redis_example(&person);
+    if args.run_redis_example {
+        redis_example(&person);
+    }
 
-    diesel_example(&person);
+    if args.run_diesel_example {
+        diesel_example(&person);
+    }
 }
 
 /// Example of serialization and deserialization using bincode
@@ -36,27 +59,27 @@ fn postgres_example(person: &Person) {
     let mut client = Client::connect(
         "postgresql://rust_app:karel123@centos01.vs.msvacina.cz/rust",
         NoTls,
-    )
-    .unwrap();
+        )
+        .unwrap();
 
     client.batch_execute("SET search_path TO example").unwrap();
 
     client
         .batch_execute(
             "
-        CREATE TABLE IF NOT EXISTS person (
-            id      SERIAL PRIMARY KEY,
-            name    TEXT NOT NULL,
-            age     INT NOT NULL
-        )",
-        )
+            CREATE TABLE IF NOT EXISTS person (
+                id      SERIAL PRIMARY KEY,
+                name    TEXT NOT NULL,
+                age     INT NOT NULL
+                )",
+                )
         .unwrap();
 
     client
         .execute(
             "INSERT INTO person (name, age) VALUES ($1, $2)",
             &[&person.name, &person.age],
-        )
+            )
         .unwrap();
 
     let person_from_db = client
